@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Omaha!</title>
+<style>
+	
+	body {
+		font-family: sans-serif;
+		font-size: 4vh;
+		height: 100vh;
+		margin: 0;
+		background-image: url("images/omaha.jpg");
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: cover;
+		padding: 1em;
+		box-sizing: border-box;
+	}
+	
+	h1 {
+		font-style: italic;
+	}
+	
+	.link {
+		cursor: pointer;
+		padding-left: 0.5em;
+		padding-right: 0.5em;
+	}
+	
+	.link:hover {
+		text-decoration: underline;
+	}
+	
+	nav {
+		position: absolute;
+		bottom: 1em;
+		right: 1em;
+	}
+	
+	#cities-div {
+		display: none;
+		left: 50%;
+		top: 50%;
+		position: absolute;
+		transform: translate(-50%,-50%);
+		background-color: rgba(255,255,255,0.5);
+		padding: 1em;
+		box-sizing: border-box;
+	}
+	
+	#cities-div td {
+		white-space: nowrap;
+	}
+	
+	td:nth-child(1) {
+		padding-right: 1em
+	}
+	
+	td:nth-child(2) {
+		text-align: right;
+	}
+	
+</style>
+<script src="jquery-2.2.0.min.js"></script>
+<script>
+	$(document).ready(function() {
+		$("#cities").click(function() {
+			$.ajax({
+				url: "omaha",
+				method: "POST",
+				dataType: "json",
+				data: {
+					action: "getCities"
+				},
+				error: function() {
+					alert("Error!")
+				},
+				success: function(cities) {
+					if (!(Array.isArray(cities))) {
+						alert(cities.msg);
+					}
+					else {
+						makeCities(cities);
+					}
+				}
+			});
+		});
+	});
+	
+	function makeCities(cities) {
+		var tableString = "<table>";
+		for (i = 0; i < cities.length; i++) {
+			tableString += "<tr>";
+			tableString += ("<td>" + cities[i].name + "</td>");
+			tableString += ("<td>" + cities[i].population + "</td>");
+			tableString += "</tr>";
+		}
+		tableString += "</table>";
+		var div = $("#cities-div");
+		div.empty();
+		div.append(tableString);
+		div.fadeIn(250);
+	}
+</script>
+</head>
+<body>
+	<h1>Omaha!</h1>
+	<nav>
+		<span class="link">History</span>
+		<span class="link" id="cities">Cities</span>
+		<span class="link">Things to do</span>
+	</nav>
+	<div id="cities-div"></div>
+</body>
+</html>
